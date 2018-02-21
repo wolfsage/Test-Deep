@@ -83,4 +83,64 @@ EOM
       diag => "",
     }
   );
+
+  my $spec = { key1 => "a", key2 => doesnotexist };
+
+  check_test(
+    sub {
+      cmp_deeply({key1 => "a"}, $spec,
+        "doesnotexist ok");
+    },
+    {
+      name => "doesnotexist ok",
+      actual_ok => 1,
+      diag => "",
+    },
+  );
+
+  ok($spec->{key2}, 'spec unchanged');
+
+  check_test(
+    sub {
+      cmp_deeply({key1 => "a"}, { key1 => doesnotexist },
+        "doesnotexist not ok");
+    },
+    {
+      name => "doesnotexist not ok",
+      actual_ok => 0,
+      diag => <<'EOM',
+Comparing hash keys of $data
+Should have been missing: 'key1'
+EOM
+    },
+  );
+
+  check_test(
+    sub {
+      cmp_deeply({key1 => "a"}, superhashof($spec),
+        "doesnotexist ok with superhashof");
+    },
+    {
+      name => "doesnotexist ok with superhashof",
+      actual_ok => 1,
+      diag => "",
+    },
+  );
+
+  ok($spec->{key2}, 'spec unchanged');
+
+  check_test(
+    sub {
+      cmp_deeply({key1 => "a"}, { key1 => doesnotexist },
+        "doesnotexist not ok with superhashof");
+    },
+    {
+      name => "doesnotexist not ok with superhashof",
+      actual_ok => 0,
+      diag => <<'EOM',
+Comparing hash keys of $data
+Should have been missing: 'key1'
+EOM
+    },
+  );
 }

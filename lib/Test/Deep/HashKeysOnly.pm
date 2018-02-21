@@ -4,15 +4,21 @@ use warnings;
 package Test::Deep::HashKeysOnly;
 
 use Test::Deep::Ref;
+use Scalar::Util qw(blessed);
 
 sub init
 {
   my $self = shift;
+  my $exp;
 
-  my %keys;
-  @keys{@_} = ();
-  $self->{val} = \%keys;
-  $self->{keys} = [sort @_];
+  if ($_[0] && ref($_[0])) {
+    $exp = shift;
+  } else {
+    $exp = { map { $_ => 1 } @_ };
+  }
+
+  $self->{val} = $exp;
+  $self->{keys} = [sort keys %$exp];
 }
 
 sub descend
@@ -27,16 +33,29 @@ sub descend
 
   my @missing;
   my @extra;
+  my @dne;
 
   while (my ($key, $value) = each %$exp)
   {
     if (exists $got{$key})
     {
+      if (blessed($value) && $value->isa('Test::Deep::DoesNotExist'))
+      {
+        push @dne, $key;
+      }
+
       delete $got{$key};
     }
     else
     {
-      push(@missing, $key);
+      if (blessed($value) && $value->isa('Test::Deep::DoesNotExist'))
+      {
+        delete $exp->{$key};
+      }
+      else
+      {
+        push(@missing, $key)
+      }
     }
   }
 
@@ -49,6 +68,11 @@ sub descend
   if (%got and (not $self->ignoreExtra))
   {
     push(@diags, "Extra: ".nice_list([keys %got]));
+  }
+
+  if (@dne)
+  {
+    push @diags, "Should have been missing: ".nice_list(\@dne);
   }
 
   if (@diags)

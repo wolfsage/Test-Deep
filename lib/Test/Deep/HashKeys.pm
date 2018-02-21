@@ -8,11 +8,16 @@ use Test::Deep::Ref;
 sub init
 {
   my $self = shift;
+  my $exp;
 
-  my %keys;
-  @keys{@_} = ();
-  $self->{val} = \%keys;
-  $self->{keys} = [sort @_];
+  if ($_[0] && ref($_[0])) {
+    $exp = shift;
+  } else {
+    $exp = { map { $_ => 1 } @_ };
+  }
+
+  $self->{val} = $exp;
+  $self->{keys} = [sort keys %$exp];
 }
 
 sub descend
@@ -34,7 +39,7 @@ sub hashkeysonly
   my $self = shift;
   my $exp = shift;
 
-  return Test::Deep::HashKeysOnly->new(keys %$exp)
+  return Test::Deep::HashKeysOnly->new($exp)
 }
 
 package Test::Deep::SuperHashKeys;
@@ -48,7 +53,7 @@ sub hashkeysonly
   my $self = shift;
   my $exp = shift;
 
-  return Test::Deep::SuperHashKeysOnly->new(keys %$exp)
+  return Test::Deep::SuperHashKeysOnly->new($exp)
 }
 
 package Test::Deep::SubHashKeys;
@@ -62,7 +67,7 @@ sub hashkeysonly
   my $self = shift;
   my $exp = shift;
 
-  return Test::Deep::SubHashKeysOnly->new(keys %$exp)
+  return Test::Deep::SubHashKeysOnly->new($exp)
 }
 
 1;

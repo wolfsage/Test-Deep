@@ -47,6 +47,7 @@ my @constructors = (
   Blessed           => "",
   Boolean           => "bool",
   Code              => "",
+  DoesNotExist      => "",
   Hash              => "",
   HashEach          => "hash_each",
   HashKeys          => "",
@@ -106,7 +107,7 @@ while (my ($pkg, $name) = splice @constructors, 0, 2)
       hash hash_each hashkeys hashkeysonly ignore isa listmethods methods
       noclass none noneof num re reftype regexpmatches regexponly regexpref
       regexprefonly scalarrefonly scalref set shallow str subbagof subhashof
-      subsetof superbagof superhashof supersetof useclass
+      subsetof superbagof superhashof supersetof useclass doesnotexist
     )
   ];
 
@@ -119,7 +120,7 @@ while (my ($pkg, $name) = splice @constructors, 0, 2)
       hash hash_each hashkeys hashkeysonly ignore listmethods methods
       noclass none noneof num re reftype regexpmatches regexponly regexpref
       regexprefonly scalarrefonly scalref set shallow str subbagof subhashof
-      subsetof superbagof superhashof supersetof useclass
+      subsetof superbagof superhashof supersetof useclass doesnotexist
     )
   ];
 
@@ -146,6 +147,7 @@ sub import {
     require Test::Deep::Class;
     require Test::Deep::Cmp;
     require Test::Deep::Code;
+    require Test::Deep::DoesNotExist;
     require Test::Deep::Hash;
     require Test::Deep::HashEach;
     require Test::Deep::HashElements;

@@ -4,6 +4,7 @@ use warnings;
 package Test::Deep::Hash;
 
 use Test::Deep::Ref;
+use Storable qw(dclone);
 
 sub init
 {
@@ -20,7 +21,7 @@ sub descend
 
   my $got = shift;
 
-  my $exp = $self->{val};
+  my $exp = dclone $self->{val};
 
   my $data = $self->data;
 
@@ -47,7 +48,7 @@ sub hash_keys
   my $self = shift;
   my $exp = shift;
 
-  return Test::Deep::HashKeys->new(keys %$exp);
+  return Test::Deep::HashKeys->new($exp);
 }
 
 sub reset_arrow
@@ -75,7 +76,7 @@ sub hash_keys
   my $self = shift;
   my $exp = shift;
 
-  return Test::Deep::SuperHashKeys->new(keys %$exp);
+  return Test::Deep::SuperHashKeys->new($exp);
 }
 
 package Test::Deep::SubHash;
@@ -98,7 +99,7 @@ sub hash_keys
   my $self = shift;
   my $exp = shift;
 
-  return Test::Deep::SubHashKeys->new(keys %$exp);
+  return Test::Deep::SubHashKeys->new($exp);
 }
 
 1;
