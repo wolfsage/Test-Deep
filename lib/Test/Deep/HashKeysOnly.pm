@@ -48,11 +48,7 @@ sub descend
     }
     else
     {
-      if (blessed($value) && $value->isa('Test::Deep::DoesNotExist'))
-      {
-        delete $exp->{$key};
-      }
-      else
+      unless (blessed($value) && $value->isa('Test::Deep::DoesNotExist'))
       {
         push(@missing, $key)
       }

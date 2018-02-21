@@ -4,6 +4,7 @@ use warnings;
 package Test::Deep::HashElements;
 
 use Test::Deep::Ref;
+use Scalar::Util qw(blessed);
 
 sub init
 {
@@ -32,6 +33,11 @@ sub descend
 
     my $got_elem = exists $got->{$key} ? $got->{$key} : $Test::Deep::DNE;
     my $exp_elem = exists $exp->{$key} ? $exp->{$key} : $Test::Deep::DNE;
+
+    return 1 if
+         ref($got_elem)
+      && Scalar::Util::refaddr($got_elem) eq $Test::Deep::DNE_ADDR
+      && blessed($exp_elem) && $exp_elem->isa('Test::Deep::DoesNotExist');
 
     next if Test::Deep::descend($got_elem, $exp_elem);
 

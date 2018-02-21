@@ -4,7 +4,6 @@ use warnings;
 package Test::Deep::Hash;
 
 use Test::Deep::Ref;
-use Storable qw(dclone);
 
 sub init
 {
@@ -21,7 +20,7 @@ sub descend
 
   my $got = shift;
 
-  my $exp = dclone $self->{val};
+  my $exp = $self->{val};
 
   my $data = $self->data;
 
